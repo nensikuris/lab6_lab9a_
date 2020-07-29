@@ -1,0 +1,111 @@
+#include <iostream>
+#include <locale>
+#include <fstream>
+#include <iomanip>
+#include <stdio.h>
+using namespace std;
+//Заполнение и вывод двумерного массива
+void Input(int matr[5][5])
+{
+	int a;
+	cout << " Как вы желаете ввести массив?\n 1 (клавитура) 2 (файл) ";
+	cin >> a; cout << "\n";
+	while ( a!=1 && a != 2) {
+		cin >> a; cout << "\n";
+	}	
+	if (a == 1)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			for (int j = 0; j < 5; j++)
+			{
+				cout << " " << i + 1 << " строка ";
+				cout << " " << j + 1 << " столбец ";
+				cin >> matr[i][j];
+			}
+			cout << "\n";
+		}
+		system("cls");
+	}
+	else
+	{
+		string nazv = "Lab7.txt";
+		ifstream z;
+		z.open(nazv);
+		if (!z.is_open())
+		{
+			cout << " Ошибка при открытии файла\n" << endl;
+		}
+		else
+		{
+			cout << setw(10) << " /Файл открыт успешно/ \n\n";
+			for (int i = 0; i < 5; i++)
+				for (int j = 0; j < 5; j++)
+					z >> matr[i][j];
+		}
+		z.close();
+	}
+	ofstream f;
+	f.open("Lab7_result.txt");
+	cout << " Ваш массив:\n";
+	f << setw(5) << " Ваш массив:\n";
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 5; j++)
+		{
+			cout << setw(4) << matr[i][j];
+			f << setw(4) << matr[i][j];
+		}
+		cout << "\n";
+		f << "\n";
+	}
+	cout << "\n";
+	f << "\n";
+	f.close();
+}
+void Find_X(int matr[5][5], int vector[5])
+{
+	ofstream f;
+	for (int j = 0; j < 5; j++)
+	{
+		int mult = 1;
+		for (int i = 0; i < 5; i++)
+			mult = matr[i][j] * mult;
+		if (mult > 0) { vector[j] = 1; }
+		else { vector[j] = -1; }
+	}
+	f.open("lab7_result.txt", ios_base::app);
+	f << " Массив X: \n";
+	cout << " Массив X: \n";
+	for (int i = 0; i < 5; i++)
+	{
+		cout << setw(4) << vector[i];
+		f << setw(4) << vector[i];
+	}
+	cout << "\n\n";
+	f << "\n\n";
+	f.close();
+}
+int Find_Y(int vector[5], int i, int y)
+{
+	ofstream f;
+	f.open("lab7_result.txt", ios_base::app);
+	if (i == 5)
+	{
+		cout << " Y (Кол-во повторений 1 среди X) = " << y << "\n";
+		f << " Y (Кол-во повторений 1 среди X) = " << y << "\n";
+		f.close();
+		return 0;
+	}
+	else if ( vector[i] == 1) y++;
+	Find_Y(vector, i + 1, y);
+}
+int main()
+{
+	setlocale(LC_ALL, "");
+	int matr[5][5], vector[5];
+	Input(matr);
+	Find_X(matr, vector);
+	Find_Y(vector,0,0);
+	return 0;
+}
